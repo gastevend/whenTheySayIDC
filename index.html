@@ -25,40 +25,33 @@
     var map
 
     function initMap () {
-      findLocation()
-        .then((loci) => {
-          console.log(loci.location)
-          doTheRest(loci)
-        })
-
-      function doTheRest (loci) {
-        var geoLocal = new google.maps.LatLng(loci.location.lat, loci.location.lng)
-        map = new google.maps.Map(document.getElementById('map'), {
-          center: geoLocal,
-          zoom: 13
-        })
-        var request = {
-          location: geoLocal,
-          radius: 7000,
-          type: ['restaurant']
-        }
-        var service = new google.maps.places.PlacesService(map)
-        service.nearbySearch(request, response)
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+      } else {
+        $('body').prepend('<h4>Geloaction is not supported</h4>')
       }
     }
-
-    function findLocation () {
-      return $.ajax({
-        url: 'https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyA1vdvU6w0bqLw1egqLckDf8RWbRHEeBWM',
-        method: 'POST'
+    function showPosition (position) {
+      var lat = position.coords.latitude;
+      var long = position.coords.longitude;
+      var geoLocal = new google.maps.LatLng(lat, long)
+      map = new google.maps.Map(document.getElementById('map'), {
+        center: geoLocal,
+        zoom: 13
       })
+      var request = {
+        location: geoLocal,
+        radius: 7000,
+        type: ['restaurant']
+      }
+      var service = new google.maps.places.PlacesService(map)
+      service.nearbySearch(request, response)
     }
 
     function response (results, status) {
       if (status == google.maps.places.PlacesServiceStatus.OK) {
         var rando = Math.floor(Math.random() * results.length)
         createMarker(results[rando])
-        console.log(results)
       } else {
         console.log(results, status)
       }
