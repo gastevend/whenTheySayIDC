@@ -17,7 +17,7 @@ webpackConfig.module.loaders.push({
 module.exports = {
   options: {
     port,
-    inline: true, // reload on change
+    inline: false, // reload on change
     webpack: webpackConfig,
     publicPath: '/public/'
   },

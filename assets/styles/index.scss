@@ -1,2 +1,21 @@
 $icon-font-path: '~bootstrap-sass/assets/fonts/bootstrap/';
 @import '~bootstrap-sass/assets/stylesheets/bootstrap';
+
+#map {
+  height: 100%;
+}
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+h2 {
+  margin-top: 0;
+}
+p {
+  margin-bottom: 0;
+}
+.green {
+  color: #16A616;
+}
