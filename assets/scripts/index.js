@@ -14,8 +14,10 @@ $(() => {
 // use require without a reference to ensure a file is bundled
 
 let map
+const yourLoc = {}
+let theirLoc
 
-function initMap() {
+function initMap () {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(showPosition, onError)
   } else {
@@ -24,11 +26,10 @@ function initMap() {
   }
 }
 
-function showPosition(position) {
-  console.log('do I get into show Position')
-  const lat = position.coords.latitude
-  const long = position.coords.longitude
-  const geoLocal = new google.maps.LatLng(lat, long)
+function showPosition (position) {
+  yourLoc.lat = position.coords.latitude
+  yourLoc.long = position.coords.longitude
+  const geoLocal = new google.maps.LatLng(yourLoc.lat, yourLoc.long)
   map = new google.maps.Map(document.getElementById('map'), {
     center: geoLocal,
     zoom: 12
@@ -43,13 +44,13 @@ function showPosition(position) {
   service.nearbySearch(request, findRando)
 }
 
-function onError(error) {
+function onError (error) {
   if (error.code === 2) {
     $('body').prepend('<h4>Allow your browser to access your location dummy</h4>')
   }
 }
 
-function findRando(results, status) {
+function findRando (results, status) {
   if (status === google.maps.places.PlacesServiceStatus.OK) {
     const rando = Math.floor(Math.random() * results.length)
     console.log(results[rando])
@@ -60,11 +61,10 @@ function findRando(results, status) {
   }
 }
 
-function createMarker(place) {
-  // vicinity price_level rating
-  const placeLoc = place.geometry.location
+function createMarker (place) {
+  theirLoc = place.geometry.location
   const marker = new google.maps.Marker({
-    position: placeLoc,
+    position: theirLoc,
     map: map
   })
   let price = place.price_level
@@ -88,6 +88,7 @@ function createMarker(place) {
       price = 'Data Not Found'
       break
   }
+  const directionsLink = 'https://www.google.com/maps/dir/' + yourLoc.lat + ',' + yourLoc.long + '/' + theirLoc.lat() + ',' + theirLoc.lng()
   let imgHtml = ' '
   if (place.photos) {
     imgHtml = '<img src=' + place.photos[0].getUrl({
@@ -95,7 +96,7 @@ function createMarker(place) {
       'maxHeight': 250
     }) + '></img>'
   }
-  const contentString = '<h2 class="center">' + place.name + '</h2>' + imgHtml + '<strong><p class="green center bigger">Open now</p></strong><p class="center bigger" id="address">' + place.vicinity + '</p><p class="center bigger">Rating: ' + place.rating + '</p> <p class="center bigger">Price Level: ' + price + '</p>'
+  const contentString = '<h2 class="center">' + place.name + '</h2>' + imgHtml + '<strong><p class="green center bigger">Open now</p></strong><p class="center bigger" id="address"><a href=' + directionsLink + ' target="_blank">' + place.vicinity + '</a></p><p class="center bigger">Rating: ' + place.rating + '</p> <p class="center bigger">Price Level: ' + price + '</p>'
   const infowindow = new google.maps.InfoWindow({
     content: contentString
   })
