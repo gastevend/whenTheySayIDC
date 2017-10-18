@@ -15,7 +15,7 @@ $(() => {
 
 let map
 
-function initMap () {
+function initMap() {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(showPosition, onError)
   } else {
@@ -24,7 +24,7 @@ function initMap () {
   }
 }
 
-function showPosition (position) {
+function showPosition(position) {
   console.log('do I get into show Position')
   const lat = position.coords.latitude
   const long = position.coords.longitude
@@ -43,34 +43,59 @@ function showPosition (position) {
   service.nearbySearch(request, findRando)
 }
 
-function onError (error) {
+function onError(error) {
   if (error.code === 2) {
     $('body').prepend('<h4>Allow your browser to access your location dummy</h4>')
   }
 }
 
-function findRando (results, status) {
+function findRando(results, status) {
   if (status === google.maps.places.PlacesServiceStatus.OK) {
     const rando = Math.floor(Math.random() * results.length)
     console.log(results[rando])
+    console.log(results.length)
     createMarker(results[rando])
   } else {
     console.log(results, status)
   }
 }
 
-function createMarker (place) {
+function createMarker(place) {
+  // vicinity price_level rating
   const placeLoc = place.geometry.location
   const marker = new google.maps.Marker({
     position: placeLoc,
     map: map
   })
+  let price = place.price_level
+  switch (price) {
+    case 1:
+      price = '$'
+      break
+    case 2:
+      price = '$$'
+      break
+    case 3:
+      price = '$$$'
+      break
+    case 4:
+      price = '$$$$'
+      break
+    case 5:
+      price = '$$$$$'
+      break
+    default:
+      price = 'Data Not Found'
+      break
+  }
   let imgHtml = ' '
   if (place.photos) {
-    imgHtml = '<img src=' + place.photos[0].getUrl({'maxWidth': 300, 'maxHeight': 500}) + '></img>'
-    // '<img src= +' + place.photos[0].html_attributions + '></img>'
+    imgHtml = '<img src=' + place.photos[0].getUrl({
+      'maxWidth': 250,
+      'maxHeight': 250
+    }) + '></img>'
   }
-  const contentString = '<h2>' + place.name + '<br>' + imgHtml + '</h2><p class="green">Open now</p>'
+  const contentString = '<h2 class="center">' + place.name + '</h2>' + imgHtml + '<strong><p class="green center bigger">Open now</p></strong><p class="center bigger" id="address">' + place.vicinity + '</p><p class="center bigger">Rating: ' + place.rating + '</p> <p class="center bigger">Price Level: ' + price + '</p>'
   const infowindow = new google.maps.InfoWindow({
     content: contentString
   })
