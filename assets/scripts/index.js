@@ -101,4 +101,11 @@ function createMarker (place) {
     content: contentString
   })
   infowindow.open(map, marker)
+  google.maps.event.addListener(marker, 'click', function () {
+    infowindow.open(map, marker)
+  })
+  const windowWidth = $('img').parent().width()
+  const imgWidth = $('img').width()
+  const marginLeft = (windowWidth - imgWidth) / 2
+  $('img').css('margin-left', marginLeft.toString() + 'px')
 }
