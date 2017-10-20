@@ -22,7 +22,6 @@ function initMap () {
     navigator.geolocation.getCurrentPosition(showPosition, onError)
   } else {
     $('body').prepend('<h4>Geloaction is not supported</h4>')
-    console.log('location aint working bub.')
   }
 }
 
@@ -45,9 +44,12 @@ function showPosition (position) {
 }
 
 function onError (error) {
-  if (error.code === 2) {
-    $('body').prepend('<h4>Allow your browser to access your location dummy</h4>')
+  if (error.code === 1) {
+    $('body').prepend('<h4 class="center">Allow your browser to access your location dummy</h4><p class="center"><strong>IOS:</strong> Settings > Privacy > Location Services > Safari > While Using the App</p>')
+  } else {
+    $('body').prepend('<h4 class="center">There was an error retrieving your location.</h4>')
   }
+  console.log(error)
 }
 
 function findRando (results, status) {
